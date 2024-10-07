@@ -9,7 +9,14 @@
 </head>
 <body>
     <div id="container"></div>
-    
+    <script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
     <script type="module" src="main.js"></script>
 </body>
 </html>
