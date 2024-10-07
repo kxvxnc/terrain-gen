@@ -14,7 +14,7 @@ const CAMERA_OFFSET = new THREE.Vector3(5, 5, 5);
 
 // Scene Setup
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 500); // Reduced from 1000
 const renderer = new THREE.WebGLRenderer();
 const clock = new THREE.Clock();
 
@@ -29,6 +29,8 @@ const animations = {};
 const keyState = {};
 const loader = new GLTFLoader();
 let lastMovementTime = 0;
+let lastChunkUpdate = 0;
+const CHUNK_UPDATE_INTERVAL = 500; // milliseconds
 
 // Terrain
 const chunks = new Map();
@@ -46,6 +48,7 @@ async function init() {
 
 function setupRenderer() {
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio * 0.7);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.body.appendChild(renderer.domElement);
@@ -220,6 +223,11 @@ function updateCamera() {
 
 function animate() {
     requestAnimationFrame(animate);
+    const time = performance.now();
+    if (time - lastChunkUpdate > CHUNK_UPDATE_INTERVAL) {
+      updateChunks();
+      lastChunkUpdate = time;
+    }
     const deltaTime = clock.getDelta();
     moveCharacter(deltaTime);
     updateCamera();
