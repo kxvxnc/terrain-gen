@@ -7,12 +7,10 @@ const CHUNK_SIZE = 10;
 const RENDER_DISTANCE = 3;
 const GRID_DIVISIONS = 15;
 const HEIGHT_SCALE = 3;
-const MOVE_SPEED = 2.5;
+const MOVE_SPEED = 5;
 const TURN_SPEED = 3 * Math.PI;
 const REST_THRESHOLD = 0.2;
 const CAMERA_OFFSET = new THREE.Vector3(5, 5, 5);
-const GROUND_COLOR = 0x3a9d23;  // A green color, you can change this
-const GRID_COLOR = 0x000000;    // Black color for grid lines
 
 // Scene Setup
 const scene = new THREE.Scene();
@@ -37,16 +35,13 @@ const chunks = new Map();
 const noise = new ImprovedNoise();
 
 // Initialize the application
-function init() {
+async function init() {
     setupRenderer();
     setupLighting();
     setupCamera();
     setupEventListeners();
-    loadCharacter().then(() => {
-        animate();
-    }).catch(error => {
-        console.error("Failed to load character:", error);
-    });
+    await loadCharacter();
+    animate();
 }
 
 function setupRenderer() {
@@ -77,6 +72,7 @@ function setupEventListeners() {
 
 function loadCharacter() {
     return new Promise((resolve, reject) => {
+        loader.setPath('../models/')
         loader.load('Soldier.glb', (gltf) => {
             character = gltf.scene;
             scene.add(character);
@@ -97,15 +93,14 @@ function loadCharacter() {
                 currentAction = animations['Idle'];
                 currentAction.play();
             }
-            
             resolve();
-        }, 
+        },
         (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
         (error) => {
             console.error('An error happened', error);
             reject(error);
         });
-    });
+    })
 }
 
 function getNoiseHeight(x, z) {
@@ -238,4 +233,6 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-init();
+document.addEventListener('DOMContentLoaded', () => {
+    init().catch(error => console.error('Initialization error:', error));
+});
