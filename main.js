@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { ImprovedNoise } from 'three/examples/jsm/math/ImprovedNoise.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { ImprovedNoise } from 'three/addons/math/ImprovedNoise.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // Constants and Settings
 const CHUNK_SIZE = 10;
